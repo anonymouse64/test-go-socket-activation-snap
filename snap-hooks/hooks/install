@@ -1,0 +1,13 @@
+#!/bin/sh -ex
+
+# TODO: this will start working at some point ...
+snapctl start --enable "$SNAP_NAME.daemon"
+
+systemctl status "snap.$SNAP_NAME.daemon" || true
+
+systemctl status "snap.$SNAP_NAME.daemon.http" || true
+
+# until then we need to do this instead
+curl http://localhost:80/hello
+
+exit 1
