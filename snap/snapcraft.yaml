@@ -1,6 +1,6 @@
 name: test-go-sockets
 base: core20
-version: "0.1"
+adopt-info: server
 summary: test go socket activation with snaps
 description: test go socket activation with snaps
 
@@ -27,15 +27,17 @@ parts:
   hooks:
     source: snap-hooks
     plugin: dump
-  my-part:
+  server:
     build-environment:
       - CGO_ENABLED: "0"
     plugin: go
     source: .
+    build-packages:
+      - git
     stage-packages:
       - curl
     override-build: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin
       cd $SNAPCRAFT_PART_SRC
-      # snapcraftctl set-version $(git describe --tags --always --dirty)
+      snapcraftctl set-version $(git describe --tags --always --dirty)
       go build -o $SNAPCRAFT_PART_INSTALL/bin ./...
