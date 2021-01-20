@@ -9,8 +9,6 @@ confinement: strict
 
 hooks:
   install:
-    command-chain:
-      - snap/command-chain/snapcraft-runner
     plugs:
       - network
 
@@ -26,6 +24,9 @@ apps:
         listen-stream: 80
 
 parts:
+  hooks:
+    source: snap-hooks
+    plugin: dump
   my-part:
     build-environment:
       - CGO_ENABLED: "0"
