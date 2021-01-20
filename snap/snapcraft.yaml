@@ -1,0 +1,40 @@
+name: test-go-sockets
+base: core20
+version: "0.1"
+summary: test go socket activation with snaps
+description: test go socket activation with snaps
+
+grade: stable
+confinement: strict
+
+hooks:
+  install:
+    command-chain:
+      - snap/command-chain/snapcraft-runner
+    plugs:
+      - network
+
+apps:
+  daemon:
+    command: bin/server
+    daemon: simple
+    plugs:
+      - network-bind
+      - network
+    sockets:
+      http:
+        listen-stream: 80
+
+parts:
+  my-part:
+    build-environment:
+      - CGO_ENABLED: "0"
+    plugin: go
+    source: .
+    stage-packages:
+      - curl
+    override-build: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cd $SNAPCRAFT_PART_SRC
+      # snapcraftctl set-version $(git describe --tags --always --dirty)
+      go build -o $SNAPCRAFT_PART_INSTALL/bin ./...

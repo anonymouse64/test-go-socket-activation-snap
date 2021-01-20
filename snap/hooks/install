@@ -1,0 +1,17 @@
+#!/bin/bash -ex
+
+# TODO: this enables the socket, but doesn't currently start the service itself
+# so we have to also manually activate it below
+snapctl start --enable "$SNAP_NAME.daemon"
+
+# we are essentially racing with systemd enabling the socket service here, so
+# it won't work immediately, so try again in a loop, giving up after a few 
+# seconds in case the service is broken
+attempts=0
+until curl http://localhost:80/hello; do
+    sleep 1
+    attempts=$(( attempts + 1 ))
+    if [ "$attempts" = 10 ]; then
+        exit 1
+    fi
+done
