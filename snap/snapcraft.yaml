@@ -12,9 +12,14 @@ hooks:
     plugs:
       - network
 
+system-usernames:
+  snap_daemon: shared
+
 apps:
   daemon:
     command: bin/server
+    command-chain:
+      - bin/drop-snap-daemon.sh
     daemon: simple
     plugs:
       - network-bind
@@ -24,8 +29,8 @@ apps:
         listen-stream: 80
 
 parts:
-  hooks:
-    source: snap-hooks
+  local-assets:
+    source: snap/local
     plugin: dump
   server:
     build-environment:
@@ -36,6 +41,7 @@ parts:
       - git
     stage-packages:
       - curl
+      - util-linux
     override-build: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin
       cd $SNAPCRAFT_PART_SRC
